@@ -8,8 +8,14 @@ import pandas as pd
 # pip install openpyxl
 import openpyxl
 
+
 def correct_nan(input_val, replacement_text=""):
     return input_val if pd.isna(input_val) is False else replacement_text
+
+
+def remove_newline_chars(input_string):
+    return input_string.replace('\n', '')
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -44,21 +50,22 @@ if __name__ == '__main__':
         if len(protocol_ids_array) > 0:
             protocol_ids_string = '|'.join(str(x) for x in protocol_ids_array)
 
-        study_name = correct_nan(citation_row["Study Name"])
-        study_acronym = correct_nan(citation_row["Study Acronym"])
-        study_type = correct_nan(citation_row["Study type (epidemiological, GWAS, clinical trial, etc)"])
-        disease_phenotype = correct_nan(citation_row["Disease/Phenotype"])
-        primary_research_focus = correct_nan(citation_row["Primary Research Focus"])
-        funding_source = correct_nan(citation_row["Funding Source"])
+        study_name = remove_newline_chars(correct_nan(citation_row["Study Name"]))
+        study_acronym = remove_newline_chars(correct_nan(citation_row["Study Acronym"]))
+        study_type = remove_newline_chars(correct_nan(citation_row["Study type (epidemiological, GWAS, clinical trial, etc)"]))
+        disease_phenotype = remove_newline_chars(correct_nan(citation_row["Disease/Phenotype"]))
+        primary_research_focus = remove_newline_chars(correct_nan(citation_row["Primary Research Focus"]))
+        funding_source = remove_newline_chars(correct_nan(citation_row["Funding Source"]))
         award_num = correct_nan(citation_row["Award #"])
-        foa = correct_nan(citation_row["FOA"])
+        foa = remove_newline_chars(correct_nan(citation_row["FOA"]))
         sql_text_line = "UPDATE " + citation_table_name + " SET date_year = \"" + str(date_year) \
-                        + "\", protocol_ids = \"" + protocol_ids_string + "\", study_name = \"" + study_name + "\"" \
-                                                                                                               ", study_acronym = \"" + study_acronym + "\", study_type = \"" + study_type + "\"" \
-                                                                                                                                                                                             ", disease_phenotype = \"" + disease_phenotype + "\", primary_research_focus = \"" + primary_research_focus + "\"" \
-                                                                                                                                                                                                                                                                                                           ", funding_source = \"" + funding_source + "\", award_num = \"" + str(
-            award_num) + "\", foa = \"" + foa + "\"" \
-                                                " WHERE id = " + str(citation_id) + "; \n"
+            + "\", protocol_ids = \"" + protocol_ids_string + "\", study_name = \"" + study_name + "\"" \
+            ", study_acronym = \"" + study_acronym + "\", study_type = \"" \
+            + study_type + "\"" \
+            ", disease_phenotype = \"" + disease_phenotype + "\", primary_research_focus = \"" \
+            + primary_research_focus + "\", funding_source = \"" + funding_source + "\", award_num = \"" \
+            + remove_newline_chars(str(award_num)) + "\", foa = \"" + foa + "\"" \
+            " WHERE id = " + str(citation_id) + "; \n"
         f.write(sql_text_line)
     f.close()
 
