@@ -14,8 +14,10 @@ def correct_nan(input_val, replacement_text=""):
 
 
 def remove_newline_chars(input_string):
-    return input_string.replace('\n', '')
+    return input_string.replace('\n', '') if type(input_string) is str else input_string
 
+def escape_single_quotes(input_string):
+    return input_string.replace("'", "''") if type(input_string) is str else input_string
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -50,21 +52,21 @@ if __name__ == '__main__':
         if len(protocol_ids_array) > 0:
             protocol_ids_string = '|'.join(str(x) for x in protocol_ids_array)
 
-        study_name = remove_newline_chars(correct_nan(citation_row["Study Name"]))
-        study_acronym = remove_newline_chars(correct_nan(citation_row["Study Acronym"]))
-        study_type = remove_newline_chars(correct_nan(citation_row["Study type (epidemiological, GWAS, clinical trial, etc)"]))
-        disease_phenotype = remove_newline_chars(correct_nan(citation_row["Disease/Phenotype"]))
-        primary_research_focus = remove_newline_chars(correct_nan(citation_row["Primary Research Focus"]))
-        funding_source = remove_newline_chars(correct_nan(citation_row["Funding Source"]))
-        award_num = correct_nan(citation_row["Award #"])
-        foa = remove_newline_chars(correct_nan(citation_row["FOA"]))
-        sql_text_line = "UPDATE " + citation_table_name + " SET date_year = \"" + str(date_year) \
-            + "\", protocol_ids = \"" + protocol_ids_string + "\", study_name = \"" + study_name + "\"" \
-            ", study_acronym = \"" + study_acronym + "\", study_type = \"" \
-            + study_type + "\"" \
-            ", disease_phenotype = \"" + disease_phenotype + "\", primary_research_focus = \"" \
-            + primary_research_focus + "\", funding_source = \"" + funding_source + "\", award_num = \"" \
-            + remove_newline_chars(str(award_num)) + "\", foa = \"" + foa + "\"" \
+        study_name = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Study Name"])))
+        study_acronym = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Study Acronym"])))
+        study_type = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Study type (epidemiological, GWAS, clinical trial, etc)"])))
+        disease_phenotype = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Disease/Phenotype"])))
+        primary_research_focus = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Primary Research Focus"])))
+        funding_source = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["Funding Source"])))
+        award_num = escape_single_quotes(correct_nan(citation_row["Award #"]))
+        foa = remove_newline_chars(escape_single_quotes(correct_nan(citation_row["FOA"])))
+        sql_text_line = "UPDATE " + citation_table_name + " SET date_year = \'" + str(date_year) \
+            + "\', protocol_ids = \'" + protocol_ids_string + "\', study_name = \'" + study_name + "\'" \
+            ", study_acronym = \'" + study_acronym + "\', study_type = \'" \
+            + study_type + "\'" \
+            ", disease_phenotype = \'" + disease_phenotype + "\', primary_research_focus = \'" \
+            + primary_research_focus + "\', funding_source = \'" + funding_source + "\', award_num = \'" \
+            + remove_newline_chars(str(award_num)) + "\', foa = \'" + foa + "\'" \
             " WHERE id = " + str(citation_id) + "; \n"
         f.write(sql_text_line)
     f.close()
