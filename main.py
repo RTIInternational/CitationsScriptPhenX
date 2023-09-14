@@ -70,19 +70,11 @@ if __name__ == '__main__':
         funding_source = remove_newline_chars(escape_single_quotes(citation_row["Funding Source"]))
         award_num = remove_newline_chars(escape_single_quotes(citation_row["Award #"]))
         foa = remove_newline_chars(escape_single_quotes(citation_row["FOA"]))
-        new_row = {'citation_id': citation_id, 'citation_label': citation_label, 'date_year': str(date_year),
-                   'protocol_ids': protocol_ids_string, 'study_name': study_name,
-                   'study_acronym': study_acronym, 'study_type': study_type, 'disease_phenotype': disease_phenotype,
-                   'primary_research_focus': primary_research_focus, 'funding_source': funding_source,
-                   'award_num': remove_newline_chars(str(award_num)), 'foa': foa}
-        new_row_list = list(pd.Series([citation_id, citation_label, str(date_year), protocol_ids_string, study_name,
+        new_row_list = list(pd.Series([citation_id, citation_label, date_year, protocol_ids_string, study_name,
                                        study_acronym, study_type, disease_phenotype,
                                        primary_research_focus, funding_source,
-                                       remove_newline_chars(str(award_num)), foa]))
-
-        # data_df = data_df.append(pd.DataFrame(pd.Series(new_row)), ignore_index=True)
+                                       award_num, foa]))
         rows.append(new_row_list)
-        # data_df.loc[len(data_df)] = pd.Series(new_row)
 
         sql_text_updates_dict = {"date_year": date_year, "protocol_ids": protocol_ids_string, "study_name": study_name,
                                  "study_acronym": study_acronym,
@@ -93,7 +85,6 @@ if __name__ == '__main__':
         condition_text_arr = []
         for key in sql_text_updates_dict:
             value = sql_text_updates_dict[key]
-            #print(key, "->", value)
             if not pd.isna(value):
                 condition_text_arr.append(key + " = \'" + str(value) + "\'")
             else:
@@ -113,7 +104,7 @@ if __name__ == '__main__':
                                      'primary_research_focus', 'funding_source', 'award_num', 'foa']
     for val in output_file_cols_arr_str_type:
         col_max_lengths_file.write(val + '\n')
-        col_max_lengths_file.write(str(numpy.nanmax(data_df[val].apply(lambda x: len(x) if not pd.isna(x) else x))) + '\n')
+        col_max_lengths_file.write(str(numpy.nanmax(data_df[val].apply(lambda x: len(x) if (not pd.isna(x) and type(x) is str) else math.nan))) + '\n')
     col_max_lengths_file.close()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

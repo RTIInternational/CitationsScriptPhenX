@@ -13,6 +13,6 @@ primary_research_focus
 funding_source
 1911.0
 award_num
-1941
+1941.0
 foa
 1467.0
